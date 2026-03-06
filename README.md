@@ -1,6 +1,6 @@
 # Django REST Framework - Mini Forum
 
-A RESTful API for a simple forum application built with Django REST Framework, featuring user authentication, post and comment management, permissions, and advanced throttling.
+A RESTful API for a simple forum application built with Django REST Framework, featuring user authentication, post and comment management, and permissions.
 
 ## Features
 
@@ -8,8 +8,7 @@ A RESTful API for a simple forum application built with Django REST Framework, f
 - **Post Management**: Create, read, update, and delete forum posts
 - **Comment System**: Add comments to posts with full CRUD operations
 - **Permissions**: Owner-based permissions for editing and deleting content
-- **API Throttling**: Rate limiting for anonymous users, authenticated users, and POST requests
-- **Custom Throttle Class**: Specialized throttling that only affects POST requests (1 per minute)
+- **API Throttling**: Rate limiting to prevent abuse
 
 ## Tech Stack
 
@@ -87,37 +86,6 @@ drf-mini-forum/
    ```
 
 The API will be available at `http://localhost:8000`
-
-## Configuration
-
-### Throttling Settings
-
-The API implements three levels of throttling configured in `backend/core/settings.py`:
-
-```python
-'DEFAULT_THROTTLE_RATES': {
-    'anon': '100/hour',      # Anonymous users: 100 requests per hour
-    'user': '1000/hour',     # Authenticated users: 1000 requests per hour
-    'posts': '1/minute',     # POST requests only: 1 per minute
-}
-```
-
-### Custom Throttle Class
-
-Located in `backend/forum_app/throttling.py`:
-
-```python
-class PostThrottle(UserRateThrottle):
-    scope = 'posts'
-
-    def allow_request(self, request, view):
-        # Only throttle POST requests
-        if request.method != 'POST':
-            return True
-        return super().allow_request(request, view)
-```
-
-This ensures GET requests are not affected by the stricter POST throttling.
 
 ## API Endpoints
 
@@ -231,35 +199,7 @@ curl http://localhost:8000/api/posts/  # 200 OK
 
 ## Development
 
-### Running Tests
-
-```bash
-python manage.py test
-```
-
-### Admin Interface
-
-Access the Django admin at `http://localhost:8000/admin/` with superuser credentials.
-
-### Database Management
-
-```bash
-# Create new migrations
-python manage.py makemigrations
-
-# Apply migrations
-python manage.py migrate
-
-# Reset database (caution: deletes all data)
-rm db.sqlite3
-python manage.py migrate
-```
-
-## Troubleshooting
-
-### Issue: Token Authentication Not Working
-
-**Solution**: Ensure the `Authorization` header format is correct:
+###
 
 ```
 Authorization: Token YOUR_TOKEN_HERE
